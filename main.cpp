@@ -10,13 +10,18 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <stdint.h>
 #include <locale.h>
 #include <windows.h>
 #include <tchar.h>
+#include <conio.h>
 
 #include "ArduinoCtrl.h"
+#include "SerialPort.h"
 
 using namespace std;
+
+#define KEY_ESC             0x1B
 
 int main(int argc, _TCHAR* argv[])
 {
@@ -36,7 +41,35 @@ int main(int argc, _TCHAR* argv[])
     }
 
     /* Arduino制御 */
-    retVal = Arduino_execMainLoop(arduinoLED);
+    int loop;
+    int key;
+    int retVal;
+    int result;
+
+    loop = TRUE;
+    result = TRUE;
+
+    cout << "loop start" << endl;
+
+    while (loop)
+    {
+        if (_kbhit() != 0)
+        {
+            key = _getch();
+
+            if (key = KEY_ESC) {
+                loop = false;
+                break;
+            }
+
+
+        }
+    }
+
+    //_tprintf(_T("プログラムを終了しました\n"));
+    cout << "プログラムを終了しました" << endl;
+
+    retVal = result;
 
     /* Arduinoを閉じる */
     Arduino_close(arduinoLED);

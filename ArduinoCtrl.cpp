@@ -77,7 +77,7 @@ ARDUINO_T Arduino_open(LPCTSTR portName)
     arduino->portName = portName;
 
     /* シリアルポートを開く */
-    arduino->port = SerialPort_open(arduino->portName, 9600);
+    arduino->port = SerialPort_open(arduino->portName, 115200);
     if (arduino->port == NULL) {
         free(arduino);
         return NULL;
