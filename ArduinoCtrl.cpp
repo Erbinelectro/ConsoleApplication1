@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdio.h>
 #include <stdint.h>
 #include <windows.h>
@@ -6,6 +7,8 @@
 
 #include "SerialPort.h"
 #include "ArduinoCtrl.h"
+
+using namespace std;
 
 #define KEY_ESC             0x1B 
 
@@ -24,7 +27,7 @@
 #define RES_PIN_VALUE       1       //レスポンス構成データ: ピン状態
 
 //ピンアサイン
-#define PIN_LED             13      //ピン番号: LED
+#define PIN_LED             5      //ピン番号: LED
 
 //ピン種類
 #define PIN_TYPE_LED        0       //ピン種類: LED
@@ -70,7 +73,7 @@ ARDUINO_T Arduino_open(LPCTSTR portName)
     if (arduino == NULL) {
         return NULL;
     }
-    ZeroMemory(arduino, sizeof(struct Arduino_st));
+    ZeroMemory(arduino, sizeof(struct Arduino_st));// initialize?
     arduino->portName = portName;
 
     /* シリアルポートを開く */
@@ -106,6 +109,8 @@ int Arduino_execMainLoop(ARDUINO_T arduino)
     loop = TRUE;
     result = TRUE;
 
+    cout << "loop start" << endl;
+
     while (loop)
     {
         if (_kbhit() != 0)
@@ -116,6 +121,7 @@ int Arduino_execMainLoop(ARDUINO_T arduino)
             {
                 case KEY_ESC:
                     _tprintf(_T("ESCキーが押下されました\n"));
+                    cout << "ESCキーが押下されました" << endl;
                     loop = FALSE;
                 break;
 
@@ -158,7 +164,9 @@ int Arduino_execMainLoop(ARDUINO_T arduino)
             }
         }
     }
-    _tprintf(_T("プログラムを終了しました\n"));
+    
+    //_tprintf(_T("プログラムを終了しました\n"));
+    cout << "プログラムを終了しました" << endl;
 
     return result;
 }
@@ -179,26 +187,32 @@ static int Arduino_execCmd(ARDUINO_T arduino, uint8_t pin, unsigned int pinType,
     /* コマンド送信 */
     cmd[CMD_TYPE] = cmdType;
     cmd[CMD_PIN] = pin;
+
     retVal = SerialPort_write(arduino->port, cmd);
+
     if (retVal == FALSE) {
-        _tprintf(_T("送信エラーが発生しました\n"));
+        //_tprintf(_T("送信エラーが発生しました\n"));
+        cout << "送信エラーが発生しました" << endl;
         result = FALSE;
     }
     else {
         /* レスポンス受信 */
         retVal = SerialPort_read(arduino->port, res);
         if (retVal == FALSE) {
-            _tprintf(_T("受信エラーが発生しました\n"));
+            //_tprintf(_T("受信エラーが発生しました\n"));
+            cout << "送信エラーが発生しました" << endl;
             result = FALSE;
         }
         else {
             /* レスポンス表示 */
             switch (pinType) {
-            case PIN_TYPE_LED:
-                Arduino_printLEDStatus(res);
+                case PIN_TYPE_LED:
+                    Arduino_printLEDStatus(res);
                 break;
-            default:
-                _tprintf(_T("ピン番号: %d, ピン状態: %d\n"), res[RES_PIN], res[RES_PIN_VALUE]);
+
+                default:
+                    //_tprintf(_T("ピン番号: %d, ピン状態: %d\n"), res[RES_PIN], res[RES_PIN_VALUE]);
+                    cout << "ピン番号: " << res[RES_PIN] << "ピン状態 : " << res[RES_PIN_VALUE];
                 break;
             }
         }
@@ -210,19 +224,28 @@ static int Arduino_execCmd(ARDUINO_T arduino, uint8_t pin, unsigned int pinType,
 
 static void Arduino_printLEDStatus(uint8_t* res)
 {
-    _tprintf(_T("ピン番号: %d, ピン状態: %d, LED: "), res[RES_PIN], res[RES_PIN_VALUE]);
+    //_tprintf(_T("ピン番号: %d, ピン状態: %d, LED: "), res[RES_PIN], res[RES_PIN_VALUE]);
+    cout << "ピン番号: " << res[RES_PIN] << "ピン状態: " << res[RES_PIN_VALUE] << endl;
+
     switch (res[RES_PIN_VALUE]) {
-    case LED_OFF:
-        _tprintf(_T("消灯"));
+        case LED_OFF:
+            //_tprintf(_T("消灯"));
+            cout << "消灯" << endl;
         break;
-    case LED_ON:
-        _tprintf(_T("点灯"));
+        
+        case LED_ON:
+            //_tprintf(_T("点灯"));
+            cout << "点灯" << endl;
         break;
-    default:
-        _tprintf(_T("状態不明"));
+
+        default:
+            //_tprintf(_T("状態不明"));
+            cout << "状態不明" << endl;
         break;
     }
-    _tprintf(_T("\n"));
+    
+    //_tprintf(_T("\n"));
+    cout << endl;
 
     return;
 }

@@ -8,6 +8,7 @@
  *              This software is released under the MIT License.
  */
 
+#include <iostream>
 #include <stdio.h>
 #include <locale.h>
 #include <windows.h>
@@ -15,6 +16,7 @@
 
 #include "ArduinoCtrl.h"
 
+using namespace std;
 
 int main(int argc, _TCHAR* argv[])
 {
@@ -25,9 +27,12 @@ int main(int argc, _TCHAR* argv[])
     _tsetlocale(LC_ALL, _T("Japanese_Japan.932"));
 
     /* Arduino‚ðŠJ‚­ */
-    arduinoLED = Arduino_open(_T("\\\\.\\COM5"));
+    arduinoLED = Arduino_open(_T("\\\\.\\COM7"));
     if (arduinoLED == NULL) {
         exit(EXIT_FAILURE);
+    }
+    else {
+        cout << "opened" << endl;
     }
 
     /* Arduino§Œä */
