@@ -13,12 +13,12 @@
 
  /*
   * @typedef SERIALPORT_T
-  * @brief   シリアルポート情報構造体
+  * @brief   シリアルポート情報構造体。SerialPort_st*を表す
   */
 typedef struct SerialPort_st* SERIALPORT_T;
 
 
-/*
+/*s
  * @brief   シリアルポートを開く
  * @param[in]       portName        シリアルポート名
  * @param[in]       portBaudRate    ボーレート

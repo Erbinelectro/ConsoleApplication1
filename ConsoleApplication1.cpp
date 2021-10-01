@@ -21,8 +21,15 @@ using namespace std;
 #pragma comment(lib, "opencv_world430.lib")
 #endif
 
+/*
+* memo
+* 
+* _T("")　は　unicode用でもMBCS用でもどっちでも行けるようにみたいな文字列の書き方
+* LPCSTR = const char* ?????
+*/
+
 //for control arduino
-ARDUINO_T arduinoLED;
+ARDUINO_T arduino;
 const int KEY_ESC = 0x1B;
 const int KEY_Q = 0x71;
 int loop = 1;
@@ -37,53 +44,53 @@ cv::CascadeClassifier cascade;
 string cascade_path = "C:\\opencv\\sources\\samples\\winrt\\FaceDetection\\FaceDetection\\Assets\\haarcascade_frontalface_alt.xml";
 vector<cv::Rect> faces;
 int i = 1;
-int *x;
+int *GAP;
 
 int main()
 {
+	cv::Mat img;
+	cv::Mat gray;
+
+	// initialize start
+
+	ZeroMemory(GAP, sizeof(GAP));
+
 	_tsetlocale(LC_ALL, _T("Japanese_Japan.932"));
 
-	arduinoLED = Arduino_open(_T("\\\\.\\COM7"));
+	arduino = Arduino_open(_T("\\\\.\\COM7"));
 	cv::VideoCapture cap(0);
 
-	if (arduinoLED == NULL && !cap.isOpened()) {
-		return -1;
-	}
+	if (arduino == NULL && !cap.isOpened()) { return -1; }
 	
 	cout << "ALL Opened" << endl;
+
+	//initialize end
 
 	cascade.load(cascade_path);//顔認識用のカスケードを用意
 
 	while (loop)
 	{
-		cv::Mat img;
 		cap >> img;
-		cv::Mat gray;
-		//グレースケール化
-		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY); //グレースケール化
+		cascade.detectMultiScale(gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30)); // gray から顔を探して赤い長方形を img に描画
 
-		// gray から顔を探して赤い長方形を img に描画
-		
-		cascade.detectMultiScale(gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
-
-		
 
 		for (auto face : faces) {
 			cv::rectangle(img, face, cv::Scalar(0, 0, 255), 2);
 			
 			cout << endl <<face.x - MaxWidth / 2 << "    ";
 			
-			if (abs(face.x - MaxWidth / 2) < abs(*x - MaxWidth / 2)) {
-				*x = face.x - MaxWidth / 2;
+			if (abs(face.x - MaxWidth / 2) < abs(*GAP - MaxWidth / 2)) {
+				*GAP = face.x - MaxWidth / 2;
 			}
 
 			i++;
 		}
 
 		if (i >= 2) {
-			cout << "center = " << x << endl;
+			cout << "center = " << *GAP << endl;
 			
-			retVal = SerialPort_write(arduinoLED->port, x);
+			retVal = SerialPort_write(arduino->port, GAP);
 
 		}
 
@@ -114,7 +121,7 @@ int main()
 	retVal = result;
 
 	/* Arduinoを閉じる */
-	Arduino_close(arduinoLED);
+	Arduino_close(arduino);
 
 	if (retVal == FALSE) {
 		exit(EXIT_FAILURE);

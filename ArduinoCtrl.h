@@ -13,7 +13,7 @@
 
  /*
   * @typedef ARDUINO_T
-  * @brief   Arduino情報構造体
+  * @brief   Arduino情報構造体。Arduino_stのポインタを表す
   */
 typedef struct Arduino_st* ARDUINO_T;
 

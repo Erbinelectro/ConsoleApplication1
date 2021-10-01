@@ -1,3 +1,1 @@
-﻿  ConsoleApplication1.cpp
-C:\opencv\build\include\opencv2\calib3d.hpp(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-  ConsoleApplication1.vcxproj -> C:\Users\oswys\OneDrive\ドキュメント\GitHub\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
+﻿  ArduinoCtrl.cpp
