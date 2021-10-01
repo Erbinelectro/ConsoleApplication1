@@ -15,27 +15,13 @@
 
 using namespace std;
 
+MiconConnecter.Form1
+
 #ifdef _DEBUG
 #pragma comment(lib, "opencv_world430d.lib")
 #else
 #pragma comment(lib, "opencv_world430.lib")
 #endif
-
-/*
-* memo
-* 
-* _T("")　は　unicode用でもMBCS用でもどっちでも行けるようにみたいな文字列の書き方
-* LPCSTR = const char* ?????
-*/
-
-//for control arduino
-ARDUINO_T arduino;
-const int KEY_ESC = 0x1B;
-const int KEY_Q = 0x71;
-int loop = 1;
-int key = 0;
-int retVal;
-int result = 1;
 
 //for opencv
 const int MaxWidth = 600;
@@ -44,23 +30,18 @@ cv::CascadeClassifier cascade;
 string cascade_path = "C:\\opencv\\sources\\samples\\winrt\\FaceDetection\\FaceDetection\\Assets\\haarcascade_frontalface_alt.xml";
 vector<cv::Rect> faces;
 int i = 1;
-int *GAP;
+int GAP;
 
 int main()
 {
+	bool loop = true;
 	cv::Mat img;
 	cv::Mat gray;
 
-	// initialize start
 
-	ZeroMemory(GAP, sizeof(GAP));
-
-	_tsetlocale(LC_ALL, _T("Japanese_Japan.932"));
-
-	arduino = Arduino_open(_T("\\\\.\\COM7"));
 	cv::VideoCapture cap(0);
 
-	if (arduino == NULL && !cap.isOpened()) { return -1; }
+	if (!cap.isOpened()) { return -1; }
 	
 	cout << "ALL Opened" << endl;
 
@@ -80,52 +61,30 @@ int main()
 			
 			cout << endl <<face.x - MaxWidth / 2 << "    ";
 			
-			if (abs(face.x - MaxWidth / 2) < abs(*GAP - MaxWidth / 2)) {
-				*GAP = face.x - MaxWidth / 2;
+			if (abs(face.x - MaxWidth / 2) < abs(GAP - MaxWidth / 2)) {
+				GAP = face.x - MaxWidth / 2;
 			}
 
 			i++;
 		}
 
 		if (i >= 2) {
-			cout << "center = " << *GAP << endl;
+			cout << "center = " << GAP << endl;
 			
-			retVal = SerialPort_write(arduino->port, GAP);
-
+			
 		}
 
 		cv::imshow(windowName, img);//画像を表示.
 
-		/*********** Arduino制御 **************/
-		if (_kbhit() != 0)
+		int key = cv::waitKey(1);
+		if (key == 113)//qボタンが押されたとき
 		{
-			key = _getch();
-
-			if (key = KEY_ESC)//ESCボタンが押されたとき
-			{
-				loop = 0;
-				break;//whileループから抜ける
-				if (retVal == FALSE) {
-					exit(EXIT_FAILURE);
-				}
-
-				exit(EXIT_SUCCESS);
-			}
-
+			loop = false;//whileループから抜ける．
 		}
 	}
 
 	//_tprintf(_T("プログラムを終了しました\n"));
 	cout << "プログラムを終了しました" << endl;
-
-	retVal = result;
-
-	/* Arduinoを閉じる */
-	Arduino_close(arduino);
-
-	if (retVal == FALSE) {
-		exit(EXIT_FAILURE);
-	}
 
 	exit(EXIT_SUCCESS);
 

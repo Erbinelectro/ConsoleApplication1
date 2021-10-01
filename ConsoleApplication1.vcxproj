@@ -161,6 +161,11 @@
     <ClInclude Include="ArduinoCtrl.h" />
     <ClInclude Include="SerialPort.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiconConnnecter\MiconConnnecter.csproj">
+      <Project>{d7dc6b0c-d0c6-45e7-a945-3244a66dbf5d}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
